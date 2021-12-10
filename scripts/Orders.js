@@ -1,4 +1,4 @@
-import { getOrders, getMetals, getStyles, getSizes } from "./database.js"
+import { getOrders, getMetals, getStyles, getSizes } from "./database.js";
 
 
 const metals = getMetals()
@@ -7,11 +7,31 @@ const styles = getStyles()
 const orders = getOrders()
 
 const buildOrderListItem = (order) => {
-    const chosenMetal = metals.find((metal) => metal.id === orders.metalId);
+    const foundMetal = metals.find((metal) => metal.id === order.metalId)
+    // const totalCost = foundMetal.price
+
+    const foundSize = sizes.find((size) => size.id === order.sizeId)
+    const foundStyle = styles.find((style) => style.id === order.styleId)
+    
+    const totalCost = foundStyle.price + foundMetal.price + foundSize.price
+   
+    const costString = totalCost.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD"
+    });
+    
     return `<li>
-        Order #${order.id} was placed on ${order.timestamp}
-    </li>`
-}
+        Order #${order.id} cost ${costString}
+    </li>` 
+
+   return `<li>
+   Order #${size.id} cost ${costString}
+    </li>` 
+
+    return `<li>
+    Order #${style.id} cost ${costString}
+    </li>` 
+};
 
 export const Orders = () => {
     
@@ -23,11 +43,11 @@ export const Orders = () => {
     
     let html = "<ul>"
 
-    const listItems = orders.map(() => buildOrderListItem());
+    const listItems = orders.map((order) => buildOrderListItem(order));
+    
 
     html += listItems.join("")
     html += "</ul>"
 
     return html
 }
-
